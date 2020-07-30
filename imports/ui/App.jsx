@@ -14,15 +14,15 @@ export const App = () => {
   const [hideCompleted, setHideCompleted] = useState(false);
 
   if (hideCompleted) {
-    _.set(filter, "checked", false);
+    _.set(filter, "isChecked", { $ne: true });
   }
 
   const { tasks, incompleteTasksCount, user } = useTracker(() => ({
     tasks: TaskModel.find(filter, { sort: { createdAt: -1 } }).fetch(),
-    incompleteTasksCount: TaskModel.find({ checked: { $ne: true } }).count(),
+    incompleteTasksCount: TaskModel.find({ isChecked: { $ne: true } }).count(),
     user: Meteor.user(),
   }));
-
+  console.log(tasks);
   if (!user) {
     return (
       <div className="simple-todos-react">
@@ -31,16 +31,11 @@ export const App = () => {
     );
   }
 
-  const handleCheckBoxClick = ({ _id, isChecked }) => {
-    TaskModel.update(_id, {
-      $set: {
-        isChecked: !isChecked,
-      },
-    });
-  };
+  const handleCheckBoxClick = ({ _id, isChecked }) =>
+    Meteor.call("task.setChecked", { taskId: _id, isChecked: !isChecked });
 
   const handleDeleteTask = ({ _id }) => {
-    TaskModel.remove({ _id });
+    Meteor.call("task.remove", { taskId: _id });
   };
 
   return (

@@ -7,14 +7,11 @@ const TaskForm = ({ user }) => {
     setText(e.target.value);
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
     if (!text) return;
 
-    TaskModel.insert({
-      text: text.trim(),
-      createdAt: new Date(),
-      owner: user._id,
-    });
+    Meteor.call("task.insert", { text });
     setText("");
   };
   return (
