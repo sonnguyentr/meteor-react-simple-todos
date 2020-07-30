@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TaskModel from "../api/tasks";
 
-const TaskForm = () => {
+const TaskForm = ({ user }) => {
   const [text, setText] = useState("");
   const handleChangeInput = (e) => {
     setText(e.target.value);
@@ -10,7 +10,11 @@ const TaskForm = () => {
   const handleFormSubmit = () => {
     if (!text) return;
 
-    TaskModel.insert({ text: text.trim(), createdAt: new Date() });
+    TaskModel.insert({
+      text: text.trim(),
+      createdAt: new Date(),
+      owner: user._id,
+    });
     setText("");
   };
   return (

@@ -4,6 +4,7 @@ import _ from "lodash";
 
 import Task from "./Task";
 import TaskForm from "./TaskForm";
+import LoginForm from "./LoginForm";
 
 import TaskModel from "/imports/api/tasks";
 
@@ -16,10 +17,19 @@ export const App = () => {
     _.set(filter, "checked", false);
   }
 
-  const { tasks, incompleteTasksCount } = useTracker(() => ({
+  const { tasks, incompleteTasksCount, user } = useTracker(() => ({
     tasks: TaskModel.find(filter, { sort: { createdAt: -1 } }).fetch(),
     incompleteTasksCount: TaskModel.find({ checked: { $ne: true } }).count(),
+    user: Meteor.user(),
   }));
+
+  if (!user) {
+    return (
+      <div className="simple-todos-react">
+        <LoginForm />
+      </div>
+    );
+  }
 
   const handleCheckBoxClick = ({ _id, isChecked }) => {
     TaskModel.update(_id, {
@@ -59,7 +69,7 @@ export const App = () => {
           />
         ))}
       </ul>
-      <TaskForm />
+      <TaskForm user={user} />
     </div>
   );
 };
