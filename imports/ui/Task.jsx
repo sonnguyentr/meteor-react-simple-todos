@@ -4,9 +4,12 @@ import classnames from "classnames";
 const Task = ({
   _id,
   text,
+  username,
+  isPrivate,
   isChecked = false,
   onCheckboxClick,
   onDeleteClick,
+  onTogglePrivateClick,
 }) => {
   const classes = classnames("task", {
     checked: !!isChecked,
@@ -15,7 +18,12 @@ const Task = ({
   return (
     <li className={classes}>
       <button onClick={() => onDeleteClick({ _id })}>&times;</button>
-      <span>{text}</span>
+      <button onClick={() => onTogglePrivateClick({ _id, isPrivate })}>
+        {isPrivate ? "Private" : "Public"}
+      </button>
+      <span>
+        {text} {username && <i>({username})</i>}
+      </span>
       <input
         type="checkbox"
         checked={isChecked}
